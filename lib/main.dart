@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
   static Future getHttp(String url, data) async{
     try {
       Response response;
-      response = await Dio().post("http://10.0.2.2:8080/$url",queryParameters: data);
+      response = await Dio().post("http://lennon.xyz/$url",queryParameters: data);
       // print(response);
       return response;
     } catch (e) {

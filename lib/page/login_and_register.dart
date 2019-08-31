@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:lao_tao/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LandRPage extends StatefulWidget {
   LandRPage({Key key}) : super(key: key);
@@ -415,18 +417,22 @@ class _LandRPageState extends State<LandRPage> {
       _password = _passwordController.text;
       _emailController.clear();
       _passwordController.clear();
-      var data = {'username': _email, 'password': _password};
+      var data = {'email': _email, 'password': _password};
       MyApp.getHttp("login", data).then((val){
         print(val.toString());
         Map<String, dynamic> resMap = jsonDecode(val.toString());
-        // print(resMap);
+        print(resMap);
         // var response = new UniResponse.fromJson(resMap);
         // print(response.success == true);
-        if (resMap['success'] == true) {
-          if (resMap['result']['login'] == "true") {
+        if (resMap['code'] == 200) {
+          if (resMap['data'] == true) {
             // print("登录成功");
+            setShareData("logined", "true");
+            setShareData("username", _email);
+            setShareData("password", _password);
             Navigator.of(context).pop();
             Navigator.of(context).pop();
+            Fluttertoast.showToast(msg: "登录成功");
           } else {
             // print("密码错误");
             setState(() {
@@ -434,7 +440,7 @@ class _LandRPageState extends State<LandRPage> {
             });
           }
         } else {
-          // print("登录失败");
+          print("登录失败");
           setState(() {
             tip = "登录失败";
           });
@@ -449,30 +455,33 @@ class _LandRPageState extends State<LandRPage> {
       _emailController.clear();
       _passwordController.clear();
       _nameController.clear();
-      var data = {'username': _email, 'password': _password, 'displayName': _displayName};
+      var data = {'email': _email, 'password': _password, 'displayName': _displayName};
       MyApp.getHttp("register", data).then((val){
         print(val.toString());
         Map<String, dynamic> resMap = jsonDecode(val.toString());
         print(resMap);
-        if (resMap['success'] == true) {
-          if (resMap['result']['register'] == "true") {
+        if (resMap['code'] == 200) {
+          if (resMap['data'] == true) {
+            Fluttertoast.showToast(msg: "注册成功").then((v){
+              sleep(Duration(seconds: 1));
+              Fluttertoast.showToast(msg: "已自动登录");
+            });
             // print("登录成功");
             setShareData("logined", "true");
             setShareData("username", _email);
             setShareData("password", _password);
             Navigator.of(context).pop();
             Navigator.of(context).pop();
-            
           } else {
             // print("密码错误");
             setState(() {
-              tip = "失败";
+              tip = "注册失败";
             });
           }
         } else {
           // print("登录失败");
           setState(() {
-            tip = "失败";
+            tip = "注册失败";
           });
         }
       });

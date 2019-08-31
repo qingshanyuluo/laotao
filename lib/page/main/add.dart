@@ -1,12 +1,9 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:lao_tao/config/httpHeader.dart';
-import 'package:lao_tao/widget/listView.dart';
 
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';//toast
+import 'package:image_picker/image_picker.dart';//从相册里面选择图片或者拍照获取照片
 
 class AddPage extends StatelessWidget {
   const AddPage({Key key}) : super(key: key);
@@ -16,7 +13,10 @@ class AddPage extends StatelessWidget {
     return Container(
       child: Scaffold(
         appBar: AppBar(title: Text("添加好店"),),
-        body: Center(child: Center(child: Text("add"),)) 
+        body: Center(child: Container(
+          child: HeadImageUploadPage(),
+          )
+        ) 
       ),
     );
   }
@@ -24,7 +24,57 @@ class AddPage extends StatelessWidget {
 
 
 
+class HeadImageUploadPage extends StatefulWidget {
+  @override
+  _HeadImageUploadPageState createState() => _HeadImageUploadPageState();
+}
 
+class _HeadImageUploadPageState extends State<HeadImageUploadPage> {
+  File _image;
+
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    _upLoadImage(image);//上传图片
+    setState(() {
+      _image = image;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Image Picker Example'),
+      ),
+      body: Center(
+        child: _image == null
+            ? Text('No image selected.')
+            : Image.file(_image),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: getImage,
+        tooltip: 'Pick Image',
+        child: Icon(Icons.add_a_photo),
+      ),
+    );
+  }
+//上传图片
+  _upLoadImage(File image) async {
+    String path = image.path;
+    var name = path.substring(path.lastIndexOf("/") + 1, path.length);
+    FormData formData = new FormData.from({
+      "file": new UploadFileInfo(new File(path), name)
+    });
+    Dio dio = new Dio();
+    var respone = await dio.post<String>("路径", data: formData);
+    if (respone.statusCode == 200) {
+      Fluttertoast.showToast(
+          msg: "图片上传成功",
+          gravity: ToastGravity.CENTER,
+          textColor: Colors.grey);
+    }
+  }
+}
 
 
 
