@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:lao_tao/main.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class LandRPage extends StatefulWidget {
@@ -430,6 +429,7 @@ class _LandRPageState extends State<LandRPage> {
             setShareData("logined", "true");
             setShareData("username", _email);
             setShareData("password", _password);
+            setShareData("displayname", "小甜甜");
             Navigator.of(context).pop();
             Navigator.of(context).pop();
             Fluttertoast.showToast(msg: "登录成功");
@@ -470,6 +470,7 @@ class _LandRPageState extends State<LandRPage> {
             setShareData("logined", "true");
             setShareData("username", _email);
             setShareData("password", _password);
+            setShareData("displayname", _displayName);
             Navigator.of(context).pop();
             Navigator.of(context).pop();
           } else {

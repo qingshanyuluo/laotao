@@ -86,10 +86,15 @@ class _PersonalPageState extends State<PersonalPage> {
                             IconButton(icon: Icon(CupertinoIcons.right_chevron), onPressed: toPersonalHomePage,)
                           ],
                         ),
-                        RaisedButton(
-                          onPressed: login,
-                          // shape: CircleBorder(side: ),
-                        )
+                        CupertinoButton(
+                          onPressed: (){
+                            setShareData("logined", "false");
+                            setShareData("username", "请登录");
+                            setShareData("password", "请登录");
+                            setShareData("displayname", "请登录");
+                            login();
+                          }, 
+                          child: Text("退出登录", style: TextStyle(color: Colors.red),),)
                       ],
 
                     ),
