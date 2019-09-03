@@ -11,14 +11,16 @@ class PersonalPage extends StatefulWidget {
 
 class _PersonalPageState extends State<PersonalPage> {
   TextEditingController typeController = TextEditingController();
-  String usename = "尚未登录";
+  String username = "尚未登录";
   @override
   Widget build(BuildContext context) {
     // print(getShareDate("key"));
     getShareDate("username").then((val){
       print(val);
       setState(() {
-        usename = val;
+        if (val.toString() != null) {
+          username = val;
+        }
       });
     });
     return Container(
@@ -47,7 +49,7 @@ class _PersonalPageState extends State<PersonalPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text("小甜甜", style: TextStyle(fontSize: 25),),
-                              Text("账号: " + usename, style: TextStyle(fontSize: 15),)
+                              Text("账号: " + username, style: TextStyle(fontSize: 15),)
                             ],
                           ),
                         ),),
