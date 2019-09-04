@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:fluttertoast/fluttertoast.dart';//toast
 import 'package:image_picker/image_picker.dart';//从相册里面选择图片或者拍照获取照片
 
@@ -32,6 +34,16 @@ class _HeadImageUploadPageState extends State<HeadImageUploadPage> {
   // File _image;
   List<File> _images = new List();
   int i;
+  String _name;
+  String _cost;
+  String _location;
+  String _commit;
+  String _type;
+  TextEditingController _nameController = new TextEditingController();
+  TextEditingController _costController = new TextEditingController();
+  TextEditingController _locationController = new TextEditingController();
+  TextEditingController _commitController = new TextEditingController();
+  TextEditingController _typeController = new TextEditingController();
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -44,31 +56,68 @@ class _HeadImageUploadPageState extends State<HeadImageUploadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // body: Center(
-      //   child: _image == null
-      //       ? Text('No image selected.')
-      //       : Image.file(_image),
-      // ),
-      body: Center(
-        child: _images.length==0
-        ? Text("jjj")
-        :
-        Row(
+      body: Container(
+        child: ListView(
           children: <Widget>[
-            Column(
-              children: _images.map((file){
-                return Image.file(file, height: 20,);
-              }).toList(),
+            _images.length == 0
+            ? Center(child: Text("请点击右下角以添加图片"),heightFactor: 7,)
+            : Container(
+              height: 150,
+              child: Swiper(
+                itemBuilder: (BuildContext context, int index){
+                  return Image.file(_images[index]);
+                },
+                itemCount: _images.length,
+                pagination: SwiperPagination(),
+                autoplay: true,
+              ),
             ),
-            RaisedButton(
+            Container(
+              child: _input(Icon(CupertinoIcons.add), "好店名称", _nameController, false),
+            ),
+            Container(
+              child: _input(Icon(CupertinoIcons.add), "人均消费", _costController, false),
+            ),
+            Container(
+              child: _input(Icon(CupertinoIcons.add), "好店位置", _locationController, false),
+            ),
+            Container(child: TextField(
+              maxLines: 4,
+              controller: _commitController,
+              style: TextStyle(
+                fontSize: 20,
+              ),
+              decoration: InputDecoration(
+                  hintStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  hintText: "请输入你的评价",
+                  enabledBorder: OutlineInputBorder(
+                    // borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(
+                      width: 0,
+                    ),
+                  ),
+                  border: OutlineInputBorder(
+                    // borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(
+                      width: 3,
+                    ),
+                  ),
+              ),
+            )),
+            CupertinoButton(
               onPressed: (){
-                _upLoadImage(_images);
-              },
+                _upLoadImage(_images, _nameController.text,
+                 int.parse(_costController.text),
+                 _locationController.text, 
+                 _commitController.text,
+                 _typeController.text);
+              }, 
+              child: Text("submit", 
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
+              color: Colors.red
             )
           ],
-        )
-       
-        
+        ),       
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: getImage,
@@ -78,32 +127,75 @@ class _HeadImageUploadPageState extends State<HeadImageUploadPage> {
     );
   }
 //上传图片
-  _upLoadImage(List<File> image) async {
+  _upLoadImage(List<File> image, String name, int cost, String location, String commit, String type) async {
     String path = image[0].path;
     print(path);
     var name = path.substring(path.lastIndexOf("/") + 1, path.length);
-    // FormData formData = new FormData.from({
-    //   "file": new UploadFileInfo(new File(path), name),
-    // });
+    var query = {'name': name, 'cost': cost, 'location': location, 'commit': commit, 'type': type};
     FormData formData = FormData.from({
-      "file": [
-        // UploadFileInfo(File("./example/upload.txt"), "upload.txt"),
-        UploadFileInfo(File(path), name),
-        UploadFileInfo(File(path), name),
-        // "jfldfjlsafjol",
-        // "jfldfjlsafjol",
-        // "jfldfjlsafjol",
-      ]      
-    });
+      // "file": [
+      //   // UploadFileInfo(File("./example/upload.txt"), "upload.txt"),
+      //   UploadFileInfo(File(path), name),
+      //   UploadFileInfo(File(path), name),
+      // ]      
+      "file": image.map((img){
+        return UploadFileInfo(File(img.path), "kdf");
+      }).toList()});
+    // });
+
     Dio dio = new Dio();
-    var respone = await dio.post<String>("http://lennon.xyz/uploadShop/1?name=火鸡的夫&cost=34&location=天津&commit=警方答飞沙芬按时发货经费和四放哈师大封杀康复后的萨科&type=烤鸭打撒十大", data: formData);
-    // var respone = await dio.post<String>("http://lennon.xyz/uploadShop/1?name=火鸡的夫&cost=34&location=天津&commit=警方答飞沙芬按时发货经费和四放哈师大封杀康复后的萨科&type=烤鸭打撒十大");
+    var respone = await dio.post<String>("http://lennon.xyz/uploadShop/2", data: formData, queryParameters: query);
     print(respone);
     if (respone.statusCode == 200) {
       Fluttertoast.showToast(
-          msg: "图片上传成功",
+          msg: "提交成功，等待审核",
           gravity: ToastGravity.CENTER,
-          textColor: Colors.grey);
+          textColor: Colors.grey,
+          timeInSecForIos: 3);
+      setState(() {
+        _nameController.clear();
+        _commitController.clear();
+        _costController.clear();
+        _typeController.clear();
+        _locationController.clear();
+        _images.clear();
+      });
     }
   }
+
+  Widget _input(
+        Icon icon, String hint, TextEditingController controller, bool obsecure) {
+      return Container(
+        // padding: EdgeInsets.only(left: 20, right: 20),
+        child: TextField(
+          controller: controller,
+          obscureText: obsecure,
+          style: TextStyle(
+            fontSize: 20,
+          ),
+          decoration: InputDecoration(
+              hintStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              hintText: hint,
+              enabledBorder: OutlineInputBorder(
+                // borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide(
+                  width: 0,
+                ),
+              ),
+              border: OutlineInputBorder(
+                // borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide(
+                  width: 3,
+                ),
+              ),
+              prefixIcon: Padding(
+                child: IconTheme(
+                  data: IconThemeData(color: Colors.black),
+                  child: icon,
+                ),
+                padding: EdgeInsets.only(left: 30, right: 10),
+              )),
+        ),
+      );
+    }
 }

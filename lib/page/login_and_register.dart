@@ -19,7 +19,7 @@ class _LandRPageState extends State<LandRPage> {
   String _email;
   String _password;
   String _displayName;
-  bool _obsecure = false;
+  // bool _obsecure = false;
   String tip = "";
   @override
   Widget build(BuildContext context) {
@@ -108,6 +108,7 @@ class _LandRPageState extends State<LandRPage> {
                           ],
                         ),
                       ),
+                      Text(tip),
                       Padding(
                         padding: EdgeInsets.only(bottom: 20, top: 60),
                         child: _input(Icon(Icons.email), "EMAIL",
@@ -118,7 +119,6 @@ class _LandRPageState extends State<LandRPage> {
                         child: _input(Icon(Icons.lock), "PASSWORD",
                             _passwordController, true),
                       ),
-                      Text(tip),
                       SizedBox(
                         height: 20,
                       ),
@@ -240,6 +240,7 @@ class _LandRPageState extends State<LandRPage> {
                         ],
                       ),
                     ),
+                    Text(tip),
                     Padding(
                       padding: EdgeInsets.only(
                         bottom: 20,
@@ -260,7 +261,6 @@ class _LandRPageState extends State<LandRPage> {
                       child: _input(Icon(Icons.lock), "PASSWORD",
                           _passwordController, true),
                     ),
-                    Text(tip),
                     Padding(
                       padding: EdgeInsets.only(
                           left: 20,

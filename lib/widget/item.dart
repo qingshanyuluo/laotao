@@ -13,7 +13,7 @@ class ShopItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 170,
-      margin: EdgeInsets.all(5),
+      // margin: EdgeInsets.all(5),
       // padding: EdgeInsets.all(10),
       color: Colors.white,
       child: GestureDetector(
@@ -27,7 +27,7 @@ class ShopItem extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Image.asset("img/dian.jpg",width: 130,),
-            Expanded(
+            Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
