@@ -11,7 +11,7 @@ class PersonalPage extends StatefulWidget {
 
 class _PersonalPageState extends State<PersonalPage> {
   TextEditingController typeController = TextEditingController();
-  String username = "尚未登录";
+  String username = "";
   @override
   Widget build(BuildContext context) {
     // print(getShareDate("key"));
@@ -55,7 +55,7 @@ class _PersonalPageState extends State<PersonalPage> {
                         ),),
                         IconButton(
                           icon: Icon(CupertinoIcons.right_chevron),
-                          onPressed: login,
+                          onPressed: (){},
                         )
                       ],
                     ),)

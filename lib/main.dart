@@ -7,16 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 void main(){
-  var user = User();
-  var providers = Providers();
-  providers.provide(Provider<User>.value(user));
-
-
+  setShareData("username", "请登录");
   runApp(
-    ProviderNode(
-        child: MyApp(), 
-        providers: providers),
-    );
+    MyApp()
+  );
 } 
 
 class MyApp extends StatelessWidget {
