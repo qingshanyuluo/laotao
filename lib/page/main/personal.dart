@@ -12,6 +12,7 @@ class PersonalPage extends StatefulWidget {
 class _PersonalPageState extends State<PersonalPage> {
   TextEditingController typeController = TextEditingController();
   String username = "";
+  String displayName = "";
   @override
   Widget build(BuildContext context) {
     // print(getShareDate("key"));
@@ -20,6 +21,14 @@ class _PersonalPageState extends State<PersonalPage> {
       setState(() {
         if (val.toString() != null) {
           username = val;
+        }
+      });
+    });
+    getShareDate("displayname").then((val){
+      print(val);
+      setState(() {
+        if (val.toString() != null) {
+          displayName = val;
         }
       });
     });
@@ -48,7 +57,7 @@ class _PersonalPageState extends State<PersonalPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text("小甜甜", style: TextStyle(fontSize: 25),),
+                              Text(displayName, style: TextStyle(fontSize: 25),),
                               Text("账号: " + username, style: TextStyle(fontSize: 15),)
                             ],
                           ),

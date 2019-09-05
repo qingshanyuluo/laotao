@@ -5,10 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:fluttertoast/fluttertoast.dart';//toast
-import 'package:image_picker/image_picker.dart';//从相册里面选择图片或者拍照获取照片
+import 'package:image_picker/image_picker.dart';
+import 'package:lao_tao/main.dart';//从相册里面选择图片或者拍照获取照片
 
 class AddPage extends StatelessWidget {
   const AddPage({Key key}) : super(key: key);
+  
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,7 @@ class _HeadImageUploadPageState extends State<HeadImageUploadPage> {
   // File _image;
   List<File> _images = new List();
   int i;
+  int userId;
   String _name;
   String _cost;
   String _location;
@@ -46,7 +49,7 @@ class _HeadImageUploadPageState extends State<HeadImageUploadPage> {
   TextEditingController _typeController = new TextEditingController();
 
   Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery,  maxHeight: 480, maxWidth: 640);
     setState(() {
       _images.add(image);
     });
@@ -55,6 +58,11 @@ class _HeadImageUploadPageState extends State<HeadImageUploadPage> {
 
   @override
   Widget build(BuildContext context) {
+    getShareDate('userid').then((val){
+      setState(() {
+        userId = val;
+      });
+    });
     return Scaffold(
       body: Container(
         child: ListView(
@@ -104,8 +112,28 @@ class _HeadImageUploadPageState extends State<HeadImageUploadPage> {
                   ),
               ),
             )),
-            CupertinoButton(
+            FlatButton(
               onPressed: (){
+                try {
+                  int a = int.parse(_costController.text) ;
+                } catch (e) {
+                  print(e);
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(title: Text('消费请填数字'),)
+                  );
+                  return;
+                }
+                if (_images.length == 0|| _commitController.text == ""
+                || _nameController.text == ""
+                || _costController.text == ""
+                || _locationController.text == "") {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(title: Text('信息没填完整'),)
+                  );
+                  return;
+                }
                 _upLoadImage(_images, _nameController.text,
                  int.parse(_costController.text),
                  _locationController.text, 
@@ -113,8 +141,8 @@ class _HeadImageUploadPageState extends State<HeadImageUploadPage> {
                  _typeController.text);
               }, 
               child: Text("submit", 
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
-              color: Colors.red
+              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),),
+              color: Colors.orange,
             )
           ],
         ),       
@@ -132,26 +160,47 @@ class _HeadImageUploadPageState extends State<HeadImageUploadPage> {
     print(path);
     var name = path.substring(path.lastIndexOf("/") + 1, path.length);
     var query = {'name': name, 'cost': cost, 'location': location, 'commit': commit, 'type': type};
-    FormData formData = FormData.from({
-      // "file": [
-      //   // UploadFileInfo(File("./example/upload.txt"), "upload.txt"),
-      //   UploadFileInfo(File(path), name),
-      //   UploadFileInfo(File(path), name),
-      // ]      
+    FormData formData = FormData.from({   
       "file": image.map((img){
         return UploadFileInfo(File(img.path), "kdf");
       }).toList()});
     // });
 
     Dio dio = new Dio();
-    var respone = await dio.post<String>("http://lennon.xyz/uploadShop/2", data: formData, queryParameters: query);
-    print(respone);
+    var respone;
+    try {
+      respone = await dio.post<String>("http://lennon.xyz/uploadShop/"+ userId.toString(), data: formData, queryParameters: query);
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(title: Text('上传失败，eee，尴尬'),)
+      );
+      return;
+    }
+    // print(respone);
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context){
+        return Scaffold(
+          body: Container(
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  Text("提交完毕等待审核哦！", style: TextStyle(color: Colors.blueGrey, fontSize: 30),),
+                  BackButton(
+                    
+                  )
+                ],
+              ),)
+          ),
+        );
+      }
+    ));
     if (respone.statusCode == 200) {
-      Fluttertoast.showToast(
-          msg: "提交成功，等待审核",
-          gravity: ToastGravity.CENTER,
-          textColor: Colors.grey,
-          timeInSecForIos: 3);
+      // Fluttertoast.showToast(
+      //     msg: "提交成功，等待审核",
+      //     gravity: ToastGravity.CENTER,
+      //     textColor: Colors.grey,
+      //     timeInSecForIos: 3);
       setState(() {
         _nameController.clear();
         _commitController.clear();

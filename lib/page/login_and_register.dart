@@ -422,28 +422,22 @@ class _LandRPageState extends State<LandRPage> {
         Map<String, dynamic> resMap = jsonDecode(val.toString());
         print(resMap);
         // var response = new UniResponse.fromJson(resMap);
-        // print(response.success == true);
         if (resMap['code'] == 200) {
-          if (resMap['data'] == true) {
+          if (resMap['data']['isMatch'] == true) {
             // print("登录成功");
-            setShareData("logined", "true");
             setShareData("username", _email);
             setShareData("password", _password);
-            setShareData("displayname", "小甜甜");
+            setShareData("displayname", resMap['data']['displayName']);
+            setShareData("userid", resMap['data']['userId']);
+            
             Navigator.of(context).pop();
             Navigator.of(context).pop();
             Fluttertoast.showToast(msg: "登录成功");
           } else {
-            // print("密码错误");
-            setState(() {
-              tip = "密码错误";
-            });
+            Fluttertoast.showToast(msg: "密码错误");
           }
         } else {
-          print("登录失败");
-          setState(() {
-            tip = "登录失败";
-          });
+          Fluttertoast.showToast(msg: "登录失败");
         }
       });
     }
@@ -461,25 +455,27 @@ class _LandRPageState extends State<LandRPage> {
         Map<String, dynamic> resMap = jsonDecode(val.toString());
         print(resMap);
         if (resMap['code'] == 200) {
-          if (resMap['data'] == true) {
+          if (resMap['data']['isSuccess'] == true) {
             Fluttertoast.showToast(msg: "注册成功").then((v){
               sleep(Duration(seconds: 1));
               Fluttertoast.showToast(msg: "已自动登录");
             });
             // print("登录成功");
-            setShareData("logined", "true");
             setShareData("username", _email);
             setShareData("password", _password);
             setShareData("displayname", _displayName);
+            setShareData("userid", resMap['data']['userId']);
             Navigator.of(context).pop();
             Navigator.of(context).pop();
           } else {
+            print(resMap);
             // print("密码错误");
             setState(() {
               tip = "注册失败";
             });
           }
         } else {
+          print(resMap);
           // print("登录失败");
           setState(() {
             tip = "注册失败";

@@ -43,13 +43,20 @@ class MyApp extends StatelessWidget {
   }
 }
 
-    setShareData(String key, String value) async {
+    setShareData(String key, dynamic value) async {
       var prefs = await SharedPreferences.getInstance();
-      await prefs.setString(key, value);
+      if (value is String) {
+        await prefs.setString(key, value);
+      } else if (value is int) {
+        await prefs.setInt(key, value);
+      }
     }
 
     Future getShareDate(String key) async {
       var prefs = await SharedPreferences.getInstance();
+      if (key == "userid") {
+        return prefs.getInt("userid");
+      }
       var count = prefs.getString(key);
       return count;
     }
