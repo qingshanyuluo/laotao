@@ -90,7 +90,7 @@ class RemarkItem extends StatelessWidget {
                         Text("用户1"),
                       ],
                     ),
-                    onTap: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (context)=>new PHome())),
+                    onTap: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (context)=>new PHome("他的主页"))),
                   ),
                   FavoriteWidget(),
                 ],

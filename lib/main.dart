@@ -7,7 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 void main(){
-  setShareData("username", "请登录");
+  setShareData("username", "");
+  setShareData("password", "");
+  setShareData("displayname", "游客");
+  setShareData("userid", -1);
   runApp(
     MyApp()
   );

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:lao_tao/main.dart';
+import 'package:lao_tao/page/login_and_register.dart';
 import 'package:lao_tao/page/main/personal.dart';
 import 'package:lao_tao/page/main/add.dart';
 import 'package:lao_tao/page/main/square.dart';
@@ -52,6 +54,12 @@ class _IndexPageState extends State<IndexPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool logined = false;
+    getShareDate('username').then((val){
+      if (val != "") {
+        logined = true;
+      }
+    });
     return Scaffold(
       backgroundColor: Color.fromRGBO(244, 245, 245, 1.0),
       bottomNavigationBar: BottomNavigationBar(
@@ -59,6 +67,13 @@ class _IndexPageState extends State<IndexPage> {
         currentIndex: currentIndex,
         items: bottomTabs,
         onTap: (index) {
+          if (index == 3 && logined == false) {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context){
+                return LandRPage();
+              }
+            ));
+          }
           setState(() {
             currentIndex = index;
             currentPage = tabBody[currentIndex];

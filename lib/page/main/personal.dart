@@ -11,15 +11,15 @@ class PersonalPage extends StatefulWidget {
 
 class _PersonalPageState extends State<PersonalPage> {
   TextEditingController typeController = TextEditingController();
-  String username = "";
-  String displayName = "";
+  String username = "~";
+  String displayName = "游客";
   @override
   Widget build(BuildContext context) {
     // print(getShareDate("key"));
     getShareDate("username").then((val){
       print(val);
       setState(() {
-        if (val.toString() != null) {
+        if (val != null) {
           username = val;
         }
       });
@@ -27,7 +27,7 @@ class _PersonalPageState extends State<PersonalPage> {
     getShareDate("displayname").then((val){
       print(val);
       setState(() {
-        if (val.toString() != null) {
+        if (val.toString() != "") {
           displayName = val;
         }
       });
@@ -64,7 +64,7 @@ class _PersonalPageState extends State<PersonalPage> {
                         ),),
                         IconButton(
                           icon: Icon(CupertinoIcons.right_chevron),
-                          onPressed: (){},
+                          onPressed: (){login();},
                         )
                       ],
                     ),)

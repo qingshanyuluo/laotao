@@ -159,7 +159,7 @@ class _HeadImageUploadPageState extends State<HeadImageUploadPage> {
     String path = image[0].path;
     print(path);
     var name = path.substring(path.lastIndexOf("/") + 1, path.length);
-    var query = {'name': name, 'cost': cost, 'location': location, 'commit': commit, 'type': type};
+    var query = {'shopName': name, 'cost': cost, 'location': location, 'commit': commit, 'shopType': type};
     FormData formData = FormData.from({   
       "file": image.map((img){
         return UploadFileInfo(File(img.path), "kdf");
@@ -169,6 +169,10 @@ class _HeadImageUploadPageState extends State<HeadImageUploadPage> {
     Dio dio = new Dio();
     var respone;
     try {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(title: Text('正在上传，请稍等'),)
+      );
       respone = await dio.post<String>("http://lennon.xyz/uploadShop/"+ userId.toString(), data: formData, queryParameters: query);
     } catch (e) {
       showDialog(
@@ -181,9 +185,10 @@ class _HeadImageUploadPageState extends State<HeadImageUploadPage> {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context){
         return Scaffold(
-          body: Container(
+          body: Center(
             child: Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text("提交完毕等待审核哦！", style: TextStyle(color: Colors.blueGrey, fontSize: 30),),
                   BackButton(
